@@ -1,2 +1,2 @@
-# py_cli
-Simple command line interface 
+# Simple Command Line Interface for creating OpenSSL config files. 
+
