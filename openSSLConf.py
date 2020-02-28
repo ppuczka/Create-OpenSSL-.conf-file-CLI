@@ -6,7 +6,7 @@ from pyfiglet import Figlet
 
 class DistinguishedName:
 
-    # Describe the Subject (ie the origanisation).
+    # Describe the Subject (ie the organisation).
     # The first 6 below could be shortened to: C ST L O OU CN
     # The short names are what are shown when the certificate is displayed.
     # Eg the details below would be shown as:
@@ -25,16 +25,16 @@ class DistinguishedName:
         self.dns = input(f"provide value for dns ")
         self.ip = input(f"provide value for ip ")
         
-    def create_config_file(self):
+    def create_config_file(self, certificate_properties):
         file_name = input("Provide filename: ")
 
         file_creator = configparser.ConfigParser()
         file_creator.add_section('crt')
-        file_creator.set('crt', 'default_bits', '2048')
-        file_creator.set('crt', 'prompt', 'no')
-        file_creator.set('crt', 'default_md', 'sha256')
-        file_creator.set('crt', 'req_extensions', 'req_ext')
-        file_creator.set('crt', 'distinguished_name', 'dn')
+        file_creator.set('crt', certificate_properties.default_bits, '2048')
+        file_creator.set('crt', certificate_properties.prompt, 'no')
+        file_creator.set('crt', certificate_properties.default_md, 'sha256')
+        file_creator.set('crt', certificate_properties.req_extensions, 'req_ext')
+        file_creator.set('crt', certificate_properties.distinguished_name, 'dn')
         file_creator.add_section('dn')
         file_creator.set('dn', 'C', self.countryName)
         file_creator.set('dn', 'ST', self.stateOrProvinceName)
@@ -74,8 +74,13 @@ class Certificate:
 def main():
 
     parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
-    parser.add_argument('-v', '--version', action = 'version', version = '1.0.0')
-    parser.add_argument('-c', '--create', dest = 'create_file', action = 'store_true', help = "creates openSSL config file")
+    parser.add_argument('-v', '--version', action='version', version='1.0.0')
+    parser.add_argument('-c', '--create', dest='create_file', action='store_true', help='creates openSSL config file')
+    parser.add_argument('-b', '--bits', help='sets default bits, default = 2048')
+    parser.add_argument('-p', '--prompt', help='turns prompt on / off, default = no')
+    parser.add_argument('-md', '--message-diggest', help='set message digest algorithm, default = sha256')
+
+
     args = parser.parse_args()
 
     if args.create_file:
@@ -84,9 +89,11 @@ def main():
         user_input = ""
         while user_input.capitalize() != "Y":
             new_file = DistinguishedName()
+            certificate_properties = Certificate()
             print(new_file)
+            print(certificate_properties)
             user_input = input("Is this correct Y/N ? ")
-        new_file.create_config_file()
+        new_file.create_config_file(certificate_properties)
 
 
 if __name__=="__main__":
