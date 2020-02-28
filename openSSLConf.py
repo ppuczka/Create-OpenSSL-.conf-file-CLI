@@ -2,34 +2,18 @@ import argparse
 import configparser
 import sys
 from pyfiglet import Figlet
-class ConfigFile:
 
-    # countryName = ""
-    # stateOrProvinceName = ""
-    # localityName = ""
-    # organizationName = ""
-    # organizationalUnitName = ""
-    # emailAddress = ""
-    # commonName = ""
-    # dns = ""
-    # ip = ""
 
-# Describe the Subject (ie the origanisation).
-# The first 6 below could be shortened to: C ST L O OU CN
-# The short names are what are shown when the certificate is displayed.
-# Eg the details below would be shown as:
-#    Subject: C=UK, ST=Hertfordshire, L=My Town, O=Some Organisation, OU=Some Department, CN=www.example.com/emailAddress=bofh@example.com
+class DistinguishedName:
 
-    def __init__(self, 
-                countryName = "", 
-                stateOrProvinceName = "",
-                localityName = "",
-                organizationName = "",
-                organizationalUnitName = "",
-                commonName = "",
-                emailAddress = "",
-                dns = "",
-                ip = ""):
+    # Describe the Subject (ie the origanisation).
+    # The first 6 below could be shortened to: C ST L O OU CN
+    # The short names are what are shown when the certificate is displayed.
+    # Eg the details below would be shown as:
+    # Subject: C=UK, ST=Hertfordshire, L=My Town, O=Some Organisation,
+    # OU=Some Department, CN=www.example.com/emailAddress=bofh@example.com
+
+    def __init__(self):
         
         self.countryName = input(f"provide value for countryName ")
         self.stateOrProvinceName = input(f"provide value for stateOrProvinceName ")
@@ -72,6 +56,21 @@ class ConfigFile:
     def __str__(self):
         return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__]) 
 
+
+class Certificate:
+
+    def __init__(self):
+        self.default_bits = '2048'
+        self.prompt = 'no'
+        self.default_md = 'sha256'
+        self.req_extensions ='req_ext'
+        self.distinguished_name = 'dn'
+
+    def __str__(self):
+        return 'Entered values:\n' + ', '.join(['{key} = {value}'.
+                                                format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
+
+
 def main():
 
     parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
@@ -80,14 +79,15 @@ def main():
     args = parser.parse_args()
 
     if args.create_file:
-        fliget = Figlet(font='slant')
-        print(fliget.renderText('OpenSSL Config'))
+        figlet = Figlet(font='slant')
+        print(figlet.renderText('OpenSSL Config'))
         user_input = ""
-        while (user_input.capitalize() != "Y"):
-            new_file = ConfigFile()
+        while user_input.capitalize() != "Y":
+            new_file = DistinguishedName()
             print(new_file)
             user_input = input("Is this correct Y/N ? ")
         new_file.create_config_file()
+
 
 if __name__=="__main__":
     main()
