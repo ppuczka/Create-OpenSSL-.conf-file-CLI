@@ -57,20 +57,6 @@ class DistinguishedName:
         return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__]) 
 
 
-class Certificate:
-
-    def __init__(self):
-        self.default_bits = '2048'
-        self.prompt = 'no'
-        self.default_md = 'sha256'
-        self.req_extensions ='req_ext'
-        self.distinguished_name = 'dn'
-
-    def __str__(self):
-        return 'Entered values:\n' + ', '.join(['{key} = {value}'.
-                                                format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
-
-
 def main():
 
     parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
@@ -78,7 +64,7 @@ def main():
     parser.add_argument('-c', '--create', dest='create_file', action='store_true', help='creates openSSL config file')
     parser.add_argument('-b', '--bits', help='sets default bits, default = 2048')
     parser.add_argument('-p', '--prompt', help='turns prompt on / off, default = no')
-    parser.add_argument('-md', '--message-diggest', help='set message digest algorithm, default = sha256')
+    parser.add_argument('-md', '--message-digest', help='set message digest algorithm, default = sha256')
 
 
     args = parser.parse_args()
