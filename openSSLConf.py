@@ -3,6 +3,8 @@ import configparser
 import sys
 from pyfiglet import Figlet
 
+from clasess.Certificate import Certificate
+
 
 class DistinguishedName:
 
@@ -66,21 +68,30 @@ def main():
     parser.add_argument('-p', '--prompt', help='turns prompt on / off, default = no')
     parser.add_argument('-md', '--message-digest', help='set message digest algorithm, default = sha256')
 
-
     args = parser.parse_args()
 
     if args.create_file:
         figlet = Figlet(font='slant')
         print(figlet.renderText('OpenSSL Config'))
         user_input = ""
+        certificate_properties = Certificate()
+
         while user_input.capitalize() != "Y":
-            new_file = DistinguishedName()
-            certificate_properties = Certificate()
-            print(new_file)
             print(certificate_properties)
             user_input = input("Is this correct Y/N ? ")
+            if user_input.capitalize() == "N":
+                certificate_properties.config()
+
+
+        user_input = ""
+        while user_input.capitalize() != "Y":
+            new_file = DistinguishedName()
+
+            print(new_file)
+            user_input = input("Is this correct Y/N ? ")
+
         new_file.create_config_file(certificate_properties)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
