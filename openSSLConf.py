@@ -1,14 +1,15 @@
 import argparse
 import configparser
 import sys
+import re
 from pyfiglet import Figlet
 
 from clasess.Certificate import Certificate
 
 
-class OpenSSLConfigFile:
+class OpenSSLConfig:
 
-    # Describe the Subject (ie the organisation).
+    # Describe the Subject (ie. the organisation).
     # The first 6 below could be shortened to: C ST L O OU CN
     # The short names are what are shown when the certificate is displayed.
     # Eg the details below would be shown as:
@@ -25,18 +26,19 @@ class OpenSSLConfigFile:
         self.emailAddress = input(f"provide value for emailAddress " )
         self.commonName = input(f"provide value for commonName ")
         self.dns = input(f"provide value for dns ")
-        self.ip = input(f"provide value for ip ")
+        self.ip = self.verify_ip()
         
     def create_config_file(self, certificate_properties):
         file_name = input("Provide filename: ")
 
         file_creator = configparser.ConfigParser()
         file_creator.add_section('crt')
-        file_creator.set('crt', certificate_properties.default_bits, '2048')
-        file_creator.set('crt', certificate_properties.prompt, 'no')
-        file_creator.set('crt', certificate_properties.default_md, 'sha256')
-        file_creator.set('crt', certificate_properties.req_extensions, 'req_ext')
-        file_creator.set('crt', certificate_properties.distinguished_name, 'dn')
+        file_creator.set('crt', 'default_bits',  certificate_properties.default_bits)
+        file_creator.set('crt', 'prompt', certificate_properties.prompt)
+        file_creator.set('crt', 'default_md', certificate_properties.default_md)
+        file_creator.set('crt', 'req_extensions', 'req_ext')
+        file_creator.set('crt', 'distinguished_name', 'dn')
+
         file_creator.add_section('dn')
         file_creator.set('dn', 'C', self.countryName)
         file_creator.set('dn', 'ST', self.stateOrProvinceName)
@@ -55,8 +57,19 @@ class OpenSSLConfigFile:
         with open(f"{file_name}.conf", "w") as conf:
             file_creator.write(conf)
 
+    @staticmethod
+    def verify_ip():
+        ip_regex = re.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
+        entered_ip = input("provide value for ip ")
+        if entered_ip.match(ip_regex):
+            return entered_ip
+        else:
+            entered_ip = input('entered IP is not valid, please provide right IP: ')
+            return entered_ip
+
     def __str__(self):
-        return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__]) 
+        return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
+
 
 
 def main():
@@ -84,7 +97,7 @@ def main():
 
         user_input = ""
         while user_input.capitalize() != "Y":
-            openssl_config_file = OpenSSLConfigFile()
+            openssl_config_file = OpenSSLConfig()
 
             print(openssl_config_file)
             user_input = input("Is this correct Y/N ? ")
