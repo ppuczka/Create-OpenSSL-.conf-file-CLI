@@ -58,7 +58,7 @@ class OpenSSLConfig:
             file_creator.write(conf)
 
     @staticmethod
-    def verify_ip():
+    def validate_ip():
         ip_regex = re.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
         entered_ip = input("provide value for ip ")
         if entered_ip.match(ip_regex):
@@ -69,8 +69,6 @@ class OpenSSLConfig:
 
     def __str__(self):
         return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
-
-
 
 def main():
 
