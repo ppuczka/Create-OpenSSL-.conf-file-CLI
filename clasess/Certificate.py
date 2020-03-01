@@ -17,8 +17,7 @@ class Certificate:
         return 'Entered values:\n' + ', '.join(['{key} = {value}'.
                                                format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
 
-    @staticmethod
-    def config():
+    def config(self):
         questions = [
             {
                 'type': 'list',
@@ -40,5 +39,8 @@ class Certificate:
             }
         ]
 
-        config = prompt(questions, style=custom_style_2)
-        print(config)
+        user_config = prompt(questions, style=custom_style_2)
+
+        self.default_bits = user_config.get('bits')
+        self.prompt = user_config.get('prompt')
+        self.default_md = user_config.get('message digest')

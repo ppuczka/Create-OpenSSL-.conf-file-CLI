@@ -6,7 +6,7 @@ from pyfiglet import Figlet
 from clasess.Certificate import Certificate
 
 
-class DistinguishedName:
+class OpenSSLConfigFile:
 
     # Describe the Subject (ie the organisation).
     # The first 6 below could be shortened to: C ST L O OU CN
@@ -82,15 +82,14 @@ def main():
             if user_input.capitalize() == "N":
                 certificate_properties.config()
 
-
         user_input = ""
         while user_input.capitalize() != "Y":
-            new_file = DistinguishedName()
+            openssl_config_file = OpenSSLConfigFile()
 
-            print(new_file)
+            print(openssl_config_file)
             user_input = input("Is this correct Y/N ? ")
 
-        new_file.create_config_file(certificate_properties)
+        openssl_config_file.create_config_file(certificate_properties)
 
 
 if __name__ == "__main__":
