@@ -23,10 +23,10 @@ class OpenSSLConfig:
         self.localityName = input(f"provide value for localityName ")
         self.organizationName = input(f"provide value for organizationName ")
         self.organizationalUnitName = input(f"provide value for organizationalUnitName ")
-        self.emailAddress = input(f"provide value for emailAddress " )
+        self.emailAddress = self.validate_email()
         self.commonName = input(f"provide value for commonName ")
         self.dns = input(f"provide value for dns ")
-        self.ip = self.verify_ip()
+        self.ip = self.validate_ip()
         
     def create_config_file(self, certificate_properties):
         file_name = input("Provide filename: ")
@@ -61,14 +61,26 @@ class OpenSSLConfig:
     def validate_ip():
         ip_regex = re.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
         entered_ip = input("provide value for ip ")
-        if entered_ip.match(ip_regex):
+        if ip_regex.match(entered_ip):
             return entered_ip
         else:
-            entered_ip = input('entered IP is not valid, please provide right IP: ')
+            entered_ip = input('entered IP is not valid, please provide correct IP: ')
+            return entered_ip
+
+    @staticmethod
+    def validate_email():
+        email_regex = re.compile("/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\."
+                                 "[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/igm")
+        entered_email = input(f"provide value for emailAddress ")
+        if email_regex.match(entered_email):
+            return entered_email
+        else:
+            entered_ip = input('entered email is not valid, please provide correct email: ')
             return entered_ip
 
     def __str__(self):
         return  'Entered values:\n' + ', '.join(['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
+
 
 def main():
 
