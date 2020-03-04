@@ -15,15 +15,20 @@ class OpenSSLConfig:
     # Subject: C=UK, ST=Hertfordshire, L=My Town, O=Some Organisation,
     # OU=Some Department, CN=www.example.com/emailAddress=bofh@example.com
 
-    def __init__(self, from_config_file=False):
+    def __init__(self, from_config_file='path'):
 
-        if from_config_file:
-            config_file_reader = configparser.ConfigParser()
+        if from_config_file != '':
             conf_file_path = input('enter config file path: ')
+            config_file_reader = configparser.ConfigParser()
+            config_file_reader.read(conf_file_path)
+            self.countryName = config_file_reader['dn']['C']
+            self.stateOrProvinceName = config_file_reader['dn']['ST']
+            self.localityName = config_file_reader['dn']['L']
+            self.organizationName = config_file_reader['dn']['O']
+            self.organizationalUnitName = config_file_reader['dn']['OU']
+            self.emailAddress = config_file_reader['dn']['emailaddress']
+            self.commonName = config_file_reader['dn']['CN']
 
-            with open(f'{conf_file_path}', 'r') as config_file:
-                config_param_dict = config_file_reader.read_dict(config_file)
-            print(config_param_dict)
         else:
             self.countryName = input(f"provide value for countryName ")
             self.stateOrProvinceName = input(f"provide value for stateOrProvinceName ")

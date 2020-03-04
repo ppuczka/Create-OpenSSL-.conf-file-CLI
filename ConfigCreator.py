@@ -40,11 +40,10 @@ def main():
         openssl_config_file.create_config_file(certificate_properties, SOFTWARE_NAME, SOFTWARE_VERSION)
 
     if args.create_csr:
-        openssl_csr = OpenSSLConfig(True)
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
-
-
+        openssl_csr = OpenSSLConfig("path")
+        print(openssl_csr)
 
 
 if __name__ == "__main__":
