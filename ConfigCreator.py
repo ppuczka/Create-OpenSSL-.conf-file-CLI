@@ -3,7 +3,7 @@ import argparse
 from pyfiglet import Figlet
 
 from clasess.Certificate import Certificate
-from clasess.OpenSSLConf import OpenSSLConfig
+from clasess.CertificateProperties import CertificateProperties
 
 SOFTWARE_NAME = 'OpenSSL Config Creator'
 SOFTWARE_VERSION = '1.0.0'
@@ -22,7 +22,7 @@ def main():
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         user_input = ""
-        certificate_properties = Certificate().from_user_input()
+        certificate_properties = CertificateProperties.from_default_properties()
         # make this more readable by proper and consistent Class naming
         while user_input.capitalize() != "Y":
             print(certificate_properties)
@@ -32,7 +32,7 @@ def main():
 
         user_input = ""
         while user_input.capitalize() != "Y":
-            openssl_config_file = OpenSSLConfig.from_user_input()
+            openssl_config_file = Certificate.from_user_input()
 
             print(openssl_config_file)
             user_input = input("Is this correct Y/N ? ")
@@ -42,7 +42,7 @@ def main():
     if args.create_csr:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
-        openssl_csr = OpenSSLConfig.from_config_file('/Users/ppuczka/Desktop/Projects_v2/py_cli/test3.conf')
+        openssl_csr = CertificateProperties.from_config_file('/Users/ppuczka/Desktop/Projects_v2/py_cli/test3.conf')
         print(openssl_csr)
 
 
