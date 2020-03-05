@@ -13,22 +13,22 @@ def main():
 
     parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
     parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
-    parser.add_argument('-c', '--create', dest='create_file', action='store_true', help='creates openSSL config file')
+    parser.add_argument('-c', '--create', dest='create_config_file', action='store_true', help='creates openSSL config file')
     parser.add_argument('-k', '--key', dest='create_csr', action='store_true', help='creates CSR')
 
     args = parser.parse_args()
 
-    if args.create_file:
+    if args.create_config_file:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         user_input = ""
-        certificate_properties = Certificate()
-
+        certificate_properties = Certificate().from_user_input()
+        # make this more readable by proper and consistent Class naming
         while user_input.capitalize() != "Y":
             print(certificate_properties)
             user_input = input("Is this correct Y/N ? ")
             if user_input.capitalize() == "N":
-                certificate_properties.config()
+                certificate_properties.from_user_input()
 
         user_input = ""
         while user_input.capitalize() != "Y":

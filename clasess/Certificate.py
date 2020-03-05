@@ -1,23 +1,22 @@
 from __future__ import print_function, unicode_literals
+
+import configparser
+
 from PyInquirer import prompt
 from examples import custom_style_2
 
 
 class Certificate:
 
-    def __init__(self, default_bits='2048', prompt='no', default_md='sha256',
-                 req_extensions='req_ext', distinguished_name='dn'):
+    def __init__(self, default_bits, prompt_type, default_md, req_extensions, distinguished_name):
         self.default_bits = default_bits
-        self.prompt = prompt
+        self.prompt = prompt_type
         self.default_md = default_md
         self.req_extensions = req_extensions
         self.distinguished_name = distinguished_name
 
-    def __str__(self):
-        return 'Entered values:\n' + ', '.join(['{key} = {value}'.
-                                               format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
-
-    def config(self):
+    @classmethod
+    def from_user_input(cls):
         questions = [
             {
                 'type': 'list',
@@ -41,6 +40,27 @@ class Certificate:
 
         user_config = prompt(questions, style=custom_style_2)
 
-        self.default_bits = user_config.get('bits')
-        self.prompt = user_config.get('prompt')
-        self.default_md = user_config.get('message digest')
+        default_bits = user_config.get('bits')
+        prompt_type = user_config.get('prompt')
+        default_md = user_config.get('message digest')
+        req_extensions = 'req_ext'
+        distinguished_name = 'dn'
+
+        return cls(default_bits, prompt_type, default_md, req_extensions, distinguished_name)
+
+    @classmethod
+    def from_config_file(cls, conf_file_path):
+        config_file_reader = configparser.ConfigParser()
+        config_file_reader.read(conf_file_path)
+
+        default_bits = config_file_reader['crt']['default_bits']
+        prompt_type = config_file_reader['crt']['prompt']
+        default_md = config_file_reader['crt']['default_md']
+        req_extensions = config_file_reader['crt']['req_extensions']
+        distinguished_name = config_file_reader['crt']['distinguished_name']
+
+        return cls(default_bits, prompt_type, default_md, req_extensions, distinguished_name)
+
+    def __str__(self):
+        return 'Entered values:\n' + ', '.join(['{key} = {value}'.
+                                               format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])
