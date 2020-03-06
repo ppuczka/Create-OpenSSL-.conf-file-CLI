@@ -17,13 +17,13 @@ def main():
     parser.add_argument('-k', '--key', dest='create_csr', action='store_true', help='creates CSR')
 
     args = parser.parse_args()
+    file_path = '/Users/ppuczka/Desktop/Projects_v2/py_cli/test3.conf'
 
     if args.create_config_file:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         user_input = ""
         certificate_properties = CertificateProperties.from_default_properties()
-        # make this more readable by proper and consistent Class naming
         while user_input.capitalize() != "Y":
             print(certificate_properties)
             user_input = input("Is this correct Y/N ? ")
@@ -42,8 +42,14 @@ def main():
     if args.create_csr:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
-        openssl_csr = CertificateProperties.from_config_file('/Users/ppuczka/Desktop/Projects_v2/py_cli/test3.conf')
-        print(openssl_csr)
+        try:
+            crt_properties = CertificateProperties.from_config_file(file_path)
+            csr_config = Certificate.from_config_file(file_path)
+
+            print(type(csr_config))
+            print(crt_properties)
+        except KeyError:
+            print("Error: no such file in path, please provide correct path")
 
 
 if __name__ == "__main__":

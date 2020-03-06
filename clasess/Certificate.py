@@ -2,7 +2,7 @@ import configparser
 import sys
 import re
 
-from OpenSSL.SSL import FILETYPE_PEM
+import OpenSSL.SSL
 from OpenSSL.crypto import (dump_certificate_request, dump_privatekey, PKey, TYPE_RSA, X509Req)
 
 
@@ -116,37 +116,29 @@ class Certificate:
         with open(f'{file_name}.conf', 'a') as conf:
             conf.write(end_file_comment)
 
-    @staticmethod
-    def create_csr(conf_file_path):
-
-        config_file_reader = configparser.ConfigParser()
-
-        with open(f'{conf_file_path}', 'r') as config_file:
-            config_param_dict = config_file_reader.read_dict(config_file)
-        print(config_param_dict)
-
-        # private_key_path = re.sub(r".(pem|crt)$", ".key", cert_file_path, flags=re.IGNORECASE)
-        #
-        # # create public/private key
-        # key = PKey()
-        # key.generate_key(TYPE_RSA, 2048)
-        #
-        # # Generate CSR
-        # req = X509Req()
-        # req.get_subject().CN = 'localhost'
-        # req.get_subject().O = 'XYZ Widgets Inc'
-        # req.get_subject().OU = 'IT Department'
-        # req.get_subject().L = 'Seattle'
-        # req.get_subject().ST = 'Washington'
-        # req.get_subject().C = 'US'
-        # req.get_subject().emailAddress = 'e@example.com'
-        # req.set_pubkey(key)
-        # req.sign(key, 'sha256')
-        #
-        # with open(csr_file_path, 'wb+') as f:
-        #     f.write(dump_certificate_request(FILETYPE_PEM, req))
-        # with open(private_key_path, 'wb+') as f:
-        #     f.write(dump_privatekey(FILETYPE_PEM, key))
+    # @staticmethod
+    # def create_csr(self):
+    #
+    #     # create public/private key
+    #     key = PKey()
+    #     key.generate_key(TYPE_RSA, object)
+    #
+    #     # Generate CSR
+    #     req = X509Req()
+    #     req.get_subject().CN = object.cn
+    #     req.get_subject().O = 'XYZ Widgets Inc'
+    #     req.get_subject().OU = 'IT Department'
+    #     req.get_subject().L = 'Seattle'
+    #     req.get_subject().ST = 'Washington'
+    #     req.get_subject().C = 'US'
+    #     req.get_subject().emailAddress = 'e@example.com'
+    #     req.set_pubkey(key)
+    #     req.sign(key, 'sha256')
+    #
+    #     with open(csr_file_path, 'wb+') as f:
+    #         f.write(dump_certificate_request(OpenSSL.SSL.FILETYPE_PEM, req))
+    #     with open(private_key_path, 'wb+') as f:
+    #         f.write(dump_privatekey(OpenSSL.SSL.FILETYPE_PEM, key))
 
     def __str__(self):
         return 'Entered values:\n' + ', '.join(
