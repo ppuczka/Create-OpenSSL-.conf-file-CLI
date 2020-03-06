@@ -4,6 +4,7 @@ from pyfiglet import Figlet
 
 from clasess.Certificate import Certificate
 from clasess.CertificateProperties import CertificateProperties
+from clasess.Csr import Csr
 
 SOFTWARE_NAME = 'OpenSSL Config Creator'
 SOFTWARE_VERSION = '1.0.0'
@@ -43,11 +44,8 @@ def main():
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         try:
-            crt_properties = CertificateProperties.from_config_file(file_path)
-            csr_config = Certificate.from_config_file(file_path)
+            csr_creator = Csr.from_config_file(file_path)
 
-            print(type(csr_config))
-            print(crt_properties)
         except KeyError:
             print("Error: no such file in path, please provide correct path")
 
