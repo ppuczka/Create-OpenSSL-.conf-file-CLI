@@ -116,30 +116,6 @@ class Certificate:
         with open(f'{file_name}.conf', 'a') as conf:
             conf.write(end_file_comment)
 
-    # @staticmethod
-    # def create_csr(self):
-    #
-    #     # create public/private key
-    #     key = PKey()
-    #     key.generate_key(TYPE_RSA, object)
-    #
-    #     # Generate CSR
-    #     req = X509Req()
-    #     req.get_subject().CN = object.cn
-    #     req.get_subject().O = 'XYZ Widgets Inc'
-    #     req.get_subject().OU = 'IT Department'
-    #     req.get_subject().L = 'Seattle'
-    #     req.get_subject().ST = 'Washington'
-    #     req.get_subject().C = 'US'
-    #     req.get_subject().emailAddress = 'e@example.com'
-    #     req.set_pubkey(key)
-    #     req.sign(key, 'sha256')
-    #
-    #     with open(csr_file_path, 'wb+') as f:
-    #         f.write(dump_certificate_request(OpenSSL.SSL.FILETYPE_PEM, req))
-    #     with open(private_key_path, 'wb+') as f:
-    #         f.write(dump_privatekey(OpenSSL.SSL.FILETYPE_PEM, key))
-
     def __str__(self):
         return 'Entered values:\n' + ', '.join(
             ['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])

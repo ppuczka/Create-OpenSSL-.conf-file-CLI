@@ -14,7 +14,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
     parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
-    parser.add_argument('-c', '--create', dest='create_config_file', action='store_true', help='creates openSSL config file')
+    parser.add_argument('-c', '--create', dest='create_config_file', action='store_true',
+                        help='creates openSSL config file')
     parser.add_argument('-k', '--key', dest='create_csr', action='store_true', help='creates CSR')
 
     args = parser.parse_args()
@@ -45,9 +46,9 @@ def main():
         print(figlet.renderText(SOFTWARE_NAME))
         try:
             csr_creator = Csr.from_config_file(file_path)
-
+            print(f"Config file loaded successfully")
         except KeyError:
-            print("Error: no such file in path, please provide correct path")
+            print("Error while loading file please verify path and file name ")
 
 
 if __name__ == "__main__":
