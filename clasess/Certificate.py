@@ -2,9 +2,6 @@ import configparser
 import sys
 import re
 
-import OpenSSL.SSL
-from OpenSSL.crypto import (dump_certificate_request, dump_privatekey, PKey, TYPE_RSA, X509Req)
-
 
 class Certificate:
 
@@ -17,13 +14,13 @@ class Certificate:
 
     def __init__(self, country_name, state_or_province_name, locality_name, organization_name, organizational_unit_name,
                  email_address, common_name, dns, ip):
-        self.countryName = country_name
-        self.stateOrProvinceName = state_or_province_name
-        self.localityName = locality_name
-        self.organizationName = organization_name
-        self.organizationalUnitName = organizational_unit_name
-        self.emailAddress = email_address
-        self.commonName = common_name
+        self.country_name = country_name
+        self.state_or_province_name = state_or_province_name
+        self.locality_name = locality_name
+        self.organization_name = organization_name
+        self.organizational_unit_name = organizational_unit_name
+        self.email_address = email_address
+        self.common_name = common_name
         self.dns = dns
         self.ip = ip
 
@@ -96,13 +93,13 @@ class Certificate:
         file_creator.set('crt', 'distinguished_name', 'dn')
 
         file_creator.add_section('dn')
-        file_creator.set('dn', 'C', self.countryName)
-        file_creator.set('dn', 'ST', self.stateOrProvinceName)
-        file_creator.set('dn', 'L', self.stateOrProvinceName)
-        file_creator.set('dn', 'O', self.organizationalUnitName)
-        file_creator.set('dn', 'OU', self.organizationalUnitName)
-        file_creator.set('dn', 'emailAddress', self.emailAddress)
-        file_creator.set('dn', 'CN', self.commonName)
+        file_creator.set('dn', 'C', self.country_name)
+        file_creator.set('dn', 'ST', self.state_or_province_name)
+        file_creator.set('dn', 'L', self.state_or_province_name)
+        file_creator.set('dn', 'O', self.organizational_unit_name)
+        file_creator.set('dn', 'OU', self.organizational_unit_name)
+        file_creator.set('dn', 'emailAddress', self.email_address)
+        file_creator.set('dn', 'CN', self.common_name)
         file_creator.add_section('req_ext')
         file_creator.set('req_ext', 'subjectAltName', '@alt_names')
         file_creator.add_section('alt_names')

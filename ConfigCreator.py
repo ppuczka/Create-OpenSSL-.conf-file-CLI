@@ -19,7 +19,7 @@ def main():
     parser.add_argument('-k', '--key', dest='create_csr', action='store_true', help='creates CSR')
 
     args = parser.parse_args()
-    file_path = '/Users/ppuczka/Desktop/Projects_v2/py_cli/test3.conf'
+    dest_folder = 'C:\\Users\\ppuczka\\Desktop\\workshop\\py_cli\\'
 
     if args.create_config_file:
         figlet = Figlet(font='slant')
@@ -44,8 +44,11 @@ def main():
     if args.create_csr:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
+        file_name = 'file1.conf'
+        file_path = dest_folder + file_name
         try:
             csr_creator = Csr.from_config_file(file_path)
+            csr_creator.create_csr(dest_folder)
             print(f"Config file loaded successfully")
         except KeyError:
             print("Error while loading file please verify path and file name ")

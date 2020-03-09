@@ -1,20 +1,31 @@
 import configparser
 
-from OpenSSL.crypto import PKey, TYPE_RSA, X509Req
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 from clasess.Certificate import Certificate
 from clasess.CertificateProperties import CertificateProperties
 
 
-class Csr (Certificate, CertificateProperties):
+class Csr(Certificate, CertificateProperties):
 
     def __init__(self, country_name, state_or_province_name, locality_name, organization_name, organizational_unit_name,
                  email_address, common_name, dns, ip, default_bits, prompt_type, default_md, req_extensions,
                  distinguished_name):
-
         Certificate.__init__(self, country_name, state_or_province_name, locality_name, organization_name,
                              organizational_unit_name, email_address, common_name, dns, ip)
         CertificateProperties.__init__(self, default_bits, prompt_type, default_md, req_extensions, distinguished_name)
+
+    def create_csr(self, path):
+        private_key = rsa.generate_private_key(public_exponent=6553, key_size=int(self.default_bits),
+                                               backend=default_backend())
+
+        with open(f"{path}{self.common_name}_key.pem", "wb") as f:
+            f.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
+                                              format=serialization.PrivateFormat.TraditionalOpenSSL,
+                                              encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase"),
+                                              ))
 
     @classmethod
     def from_config_file(cls, conf_file_path):
@@ -37,31 +48,6 @@ class Csr (Certificate, CertificateProperties):
         dns = config_file_reader['alt_names']['dns.1']
         ip = config_file_reader['alt_names']['ip.1']
 
-        return cls(default_bits, prompt_type, default_md, req_extensions, distinguished_name,
-                   country_name, state_or_province_name, locality_name, organization_name,
-                   organizational_unit_name, email_address, common_name, dns, ip)
-
-    @staticmethod
-    def create_csr(self):
-
-        # create public/private key
-        key = PKey()
-        key.generate_key(TYPE_RSA, object)
-
-        # Generate CSR
-        req = X509Req()
-        req.get_subject().CN = object.cn
-        req.get_subject().O = 'XYZ Widgets Inc'
-        req.get_subject().OU = 'IT Department'
-        req.get_subject().L = 'Seattle'
-        req.get_subject().ST = 'Washington'
-        req.get_subject().C = 'US'
-        req.get_subject().emailAddress = 'e@example.com'
-        req.set_pubkey(key)
-        req.sign(key, 'sha256')
-
-        with open(certificate_file_path, 'wb+') as f:
-            f.write(dump_certificate_request(OpenSSL.SSL.FILETYPE_PEM, req))
-
-        with open(private_key_path, 'wb+') as f:
-            f.write(dump_privatekey(OpenSSL.SSL.FILETYPE_PEM, key))
+        return cls(country_name, state_or_province_name, locality_name, organization_name,
+                   organizational_unit_name, email_address, common_name, dns, ip,
+                   default_bits, prompt_type, default_md, req_extensions, distinguished_name)
