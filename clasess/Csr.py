@@ -1,8 +1,12 @@
 import configparser
 
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.backends.openssl import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography import x509
+from cryptography.x509.oid import NameOID
+from cryptography.hazmat.primitives import hashes
 
 from clasess.Certificate import Certificate
 from clasess.CertificateProperties import CertificateProperties
@@ -16,16 +20,6 @@ class Csr(Certificate, CertificateProperties):
         Certificate.__init__(self, country_name, state_or_province_name, locality_name, organization_name,
                              organizational_unit_name, email_address, common_name, dns, ip)
         CertificateProperties.__init__(self, default_bits, prompt_type, default_md, req_extensions, distinguished_name)
-
-    def create_csr(self, path):
-        private_key = rsa.generate_private_key(public_exponent=6553, key_size=int(self.default_bits),
-                                               backend=default_backend())
-
-        with open(f"{path}{self.common_name}_key.pem", "wb") as f:
-            f.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
-                                              format=serialization.PrivateFormat.TraditionalOpenSSL,
-                                              encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase"),
-                                              ))
 
     @classmethod
     def from_config_file(cls, conf_file_path):
@@ -51,3 +45,35 @@ class Csr(Certificate, CertificateProperties):
         return cls(country_name, state_or_province_name, locality_name, organization_name,
                    organizational_unit_name, email_address, common_name, dns, ip,
                    default_bits, prompt_type, default_md, req_extensions, distinguished_name)
+
+    def create_csr(self, path):
+        private_key = rsa.generate_private_key(public_exponent=6553, key_size=int(self.default_bits),
+                                               backend=default_backend())
+
+        with open(f"{path}{self.common_name}_key.pem", "wb") as f:
+            f.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
+                                              format=serialization.PrivateFormat.TraditionalOpenSSL,
+                                              encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase")
+                                              ))
+
+        csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
+            # Provide various details about who we are.
+            x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
+            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_or_province_name),
+            x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
+            x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
+            x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
+        ])).add_extension(
+            x509.SubjectAlternativeName([
+                # Describe what sites we want this certificate for.
+                x509.DNSName(self.dns),
+                x509.DNSName(self.dns),
+                x509.DNSName(self.ip),
+            ]),
+            critical=False,
+            # Sign the CSR with our private key.
+        ).sign(private_key, hashes.SHA256(), default_backend())
+
+        # Write our CSR out to disk.
+        with open(f"{path}{self.common_name}_csr.pem", "wb") as f:
+            f.write(csr.public_bytes(serialization.Encoding.PEM))

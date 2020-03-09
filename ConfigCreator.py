@@ -40,7 +40,7 @@ def main():
             user_input = input("Is this correct Y/N ? ")
 
         openssl_config_file.create_config_file(certificate_properties, SOFTWARE_NAME, SOFTWARE_VERSION)
-
+    # TODO: file path configuration
     if args.create_csr:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
