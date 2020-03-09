@@ -6,17 +6,21 @@ from clasess.Certificate import Certificate
 from clasess.CertificateProperties import CertificateProperties
 from clasess.Csr import Csr
 
-SOFTWARE_NAME = 'OpenSSL Config Creator'
+SOFTWARE_NAME = 'OpenSSL Certificate Creator'
 SOFTWARE_VERSION = '1.0.0'
 
 
 def main():
+    parser = argparse.ArgumentParser(prog='cc',
+                                     description='Create openSSL config files, certificates and keys with one command')
 
-    parser = argparse.ArgumentParser(description='Create openSSL config files with one command')
-    parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
-    parser.add_argument('-c', '--create', dest='create_config_file', action='store_true',
+    parser.add_argument('--create-config', dest='create_config_file', action='store_true',
                         help='creates openSSL config file')
-    parser.add_argument('-k', '--key', dest='create_csr', action='store_true', help='creates CSR')
+
+    parser.add_argument('--create-csr', dest='create_csr', action='store_true',
+                        help='creates private key and certificate signing request')
+
+    parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
 
     args = parser.parse_args()
     dest_folder = 'C:\\Users\\ppuczka\\Desktop\\workshop\\py_cli\\'
