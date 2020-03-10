@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from pyfiglet import Figlet
 
@@ -14,18 +15,22 @@ def main():
     parser = argparse.ArgumentParser(prog='cc',
                                      description='Create openSSL config files, certificates and keys with one command')
 
-    parser.add_argument('--create-config', dest='create_config_file', action='store_true',
+    # parser.add_argument('path')
+
+    parser.add_argument('--create-config', '-c', dest='create_config_file', action='store_true',
                         help='creates openSSL config file')
 
-    parser.add_argument('--create-csr', dest='create_csr', action='store_true',
+    parser.add_argument('--create-csr', '-k', dest='create_csr', action='store_true',
                         help='creates private key and certificate signing request')
 
     parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
 
     args = parser.parse_args()
+    current_path = os.path.dirname(os.path.abspath(__file__))
     dest_folder = 'C:\\Users\\ppuczka\\Desktop\\workshop\\py_cli\\'
 
     if args.create_config_file:
+        print(dest_folder)
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         user_input = ""
