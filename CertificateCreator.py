@@ -1,5 +1,6 @@
 import argparse
 import os
+import logging
 
 from pyfiglet import Figlet
 
@@ -63,11 +64,10 @@ def main():
             config_file_dir = os.path.dirname(config_file_path)
             csr_creator = Csr.from_config_file(config_file_path)
             print(f"Config file loaded successfully")
-            print(config_file_dir)
             csr_creator.create_csr(config_file_dir)
 
         except KeyError:
-            print("Error while loading file please verify path and file name ")
+            logging.error("Error while loading file please verify path and file name ")
 
 
 if __name__ == "__main__":

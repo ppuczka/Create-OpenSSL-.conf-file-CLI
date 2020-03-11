@@ -113,6 +113,8 @@ class Certificate:
         with open(f'{destination_folder_path}/{file_name}.conf', 'a') as conf:
             conf.write(end_file_comment)
 
+        print(f'{conf.name} file created successfully')
+
     def __str__(self):
         return 'Entered values:\n' + ', '.join(
             ['{key} = {value}'.format(key=key, value=self.__dict__.get(key)) for key in self.__dict__])

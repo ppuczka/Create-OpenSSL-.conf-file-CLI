@@ -55,9 +55,9 @@ class Csr(Certificate, CertificateProperties):
                                               format=serialization.PrivateFormat.TraditionalOpenSSL,
                                               encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase")
                                               ))
+        print(f'{f.name} file created successfully')
 
         csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
-            # Provide various details about who we are.
             x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
             x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_or_province_name),
             x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
@@ -65,15 +65,14 @@ class Csr(Certificate, CertificateProperties):
             x509.NameAttribute(NameOID.COMMON_NAME, self.common_name),
         ])).add_extension(
             x509.SubjectAlternativeName([
-                # Describe what sites we want this certificate for.
                 x509.DNSName(self.dns),
                 x509.DNSName(self.dns),
                 x509.DNSName(self.ip),
             ]),
             critical=False,
-            # Sign the CSR with our private key.
         ).sign(private_key, hashes.SHA256(), default_backend())
 
-        # Write our CSR out to disk.
         with open(f"{path}/{self.common_name}_csr.pem", "wb") as f:
             f.write(csr.public_bytes(serialization.Encoding.PEM))
+
+        print(f'{f.name} file created successfully')
