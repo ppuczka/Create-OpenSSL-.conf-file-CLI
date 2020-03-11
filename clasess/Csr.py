@@ -50,7 +50,7 @@ class Csr(Certificate, CertificateProperties):
         private_key = rsa.generate_private_key(public_exponent=6553, key_size=int(self.default_bits),
                                                backend=default_backend())
 
-        with open(f"{path}{self.common_name}_key.pem", "wb") as f:
+        with open(f"{path}/{self.common_name}_key.pem", "wb") as f:
             f.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                               format=serialization.PrivateFormat.TraditionalOpenSSL,
                                               encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase")
@@ -75,5 +75,5 @@ class Csr(Certificate, CertificateProperties):
         ).sign(private_key, hashes.SHA256(), default_backend())
 
         # Write our CSR out to disk.
-        with open(f"{path}{self.common_name}_csr.pem", "wb") as f:
+        with open(f"{path}/{self.common_name}_csr.pem", "wb") as f:
             f.write(csr.public_bytes(serialization.Encoding.PEM))

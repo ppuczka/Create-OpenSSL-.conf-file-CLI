@@ -79,7 +79,7 @@ class Certificate:
         return cls(country_name, state_or_province_name, locality_name, organization_name, organizational_unit_name,
                    email_address, common_name, dns, ip)
 
-    def create_config_file(self, certificate_properties, software_name, software_version):
+    def create_config_file(self, destination_folder_path, certificate_properties, software_name, software_version):
         end_file_comment = f'#Created with {software_name} version: {software_version}'
 
         file_creator = configparser.ConfigParser()
@@ -107,10 +107,10 @@ class Certificate:
         file_creator.set('alt_names', 'IP.1', self.ip)
         file_creator.write(sys.stdout)
 
-        with open(f'{file_name}.conf', 'a') as conf:
+        with open(f'{destination_folder_path}/{file_name}.conf', 'a') as conf:
             file_creator.write(conf)
 
-        with open(f'{file_name}.conf', 'a') as conf:
+        with open(f'{destination_folder_path}/{file_name}.conf', 'a') as conf:
             conf.write(end_file_comment)
 
     def __str__(self):

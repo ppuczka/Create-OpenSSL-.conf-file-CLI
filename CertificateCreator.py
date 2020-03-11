@@ -9,28 +9,31 @@ from clasess.Csr import Csr
 
 SOFTWARE_NAME = 'OpenSSL Certificate Creator'
 SOFTWARE_VERSION = '1.0.0'
+current_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='cc',
-                                     description='Create openSSL config files, certificates and keys with one command')
-
-    # parser.add_argument('path')
+    parser = argparse.ArgumentParser(description='Create openSSL config files, certificates and keys with one command')
 
     parser.add_argument('--create-config', '-c', dest='create_config_file', action='store_true',
-                        help='creates openSSL config file')
+                        help='creates openSSL config file at current folder')
 
-    parser.add_argument('--create-csr', '-k', dest='create_csr', action='store_true',
+    parser.add_argument('--create-csr', '-s', dest='create_csr', action='store_true',
                         help='creates private key and certificate signing request')
+
+    parser.add_argument('-p', '--path', default=current_path, required=False,
+                        help='enter path to store file either current path will be used')
+
+    parser.add_argument('-f', '--file', default=None, required=False,
+                        help='enter path to openSSL config file')
 
     parser.add_argument('-v', '--version', action='version', version=SOFTWARE_VERSION)
 
     args = parser.parse_args()
-    current_path = os.path.dirname(os.path.abspath(__file__))
-    dest_folder = 'C:\\Users\\ppuczka\\Desktop\\workshop\\py_cli\\'
+    destination_folder_path = args.path
+    config_file_path = args.file
 
     if args.create_config_file:
-        print(dest_folder)
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
         user_input = ""
@@ -48,17 +51,21 @@ def main():
             print(openssl_config_file)
             user_input = input("Is this correct Y/N ? ")
 
-        openssl_config_file.create_config_file(certificate_properties, SOFTWARE_NAME, SOFTWARE_VERSION)
+        openssl_config_file.create_config_file(destination_folder_path, certificate_properties, SOFTWARE_NAME, SOFTWARE_VERSION)
     # TODO: file path configuration
     if args.create_csr:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
-        file_name = 'file1.conf'
-        file_path = dest_folder + file_name
         try:
-            csr_creator = Csr.from_config_file(file_path)
-            csr_creator.create_csr(dest_folder)
+            if config_file_path is None:
+                config_file_path = input('Warning file path to config file not present.\nEnter config file path: ')
+
+            config_file_dir = os.path.dirname(config_file_path)
+            csr_creator = Csr.from_config_file(config_file_path)
             print(f"Config file loaded successfully")
+            print(config_file_dir)
+            csr_creator.create_csr(config_file_dir)
+
         except KeyError:
             print("Error while loading file please verify path and file name ")
 
