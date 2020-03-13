@@ -1,4 +1,5 @@
 import configparser
+from datetime import datetime, timedelta
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.backends.openssl import hashes
@@ -46,16 +47,52 @@ class Csr(Certificate, CertificateProperties):
                    organizational_unit_name, email_address, common_name, dns, ip,
                    default_bits, prompt_type, default_md, req_extensions, distinguished_name)
 
-    def create_csr(self, path):
+    def create_private_key(self, path):
         private_key = rsa.generate_private_key(public_exponent=6553, key_size=int(self.default_bits),
                                                backend=default_backend())
 
-        with open(f"{path}/{self.common_name}_key.pem", "wb") as f:
+        with open(f"{path}/{self.common_name}_priv_key.pem", "wb") as f:
             f.write(private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                               format=serialization.PrivateFormat.TraditionalOpenSSL,
                                               encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase")
                                               ))
         print(f'{f.name} file created successfully')
+        return private_key
+
+    def create_public_key(self, path):
+        private_key = self.create_private_key(path)
+
+        subject = x509.Name(
+            [x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
+             x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAMEA, self.state_or_province_name),
+             x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
+             x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
+             x509.NameAttribute(NameOID.COMMON_NAME, self.common_name)]
+        )
+
+        issuer = subject
+        valid_from = datetime.utcnow()
+        valid_until = valid_from + timedelta(days=365)
+
+        builder = (
+            x509.CertificateBuilder().subject_name(subject)
+                .issuer_name(issuer)
+                .public_key(private_key.public_key())
+                .serial_number(x509.random_serial_number())
+                .not_valid_before(valid_from)
+                .not_valid_after(valid_until)
+        )
+
+        public_key = builder.sign(private_key, hashes.SHA256, default_backend())
+
+        with open(f"{path}/ca_pub_key.pem", "wb") as f:
+            f.write(public_key.public_bytes(serialization.Encoding.PEM))
+
+        print(f'{f.name} file created successfully')
+        return public_key
+
+    def create_csr(self, path):
+        private_key = self.create_private_key(path)
 
         csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
             x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
@@ -76,3 +113,4 @@ class Csr(Certificate, CertificateProperties):
             f.write(csr.public_bytes(serialization.Encoding.PEM))
 
         print(f'{f.name} file created successfully')
+        return csr
