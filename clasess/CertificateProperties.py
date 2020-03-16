@@ -52,6 +52,7 @@ class CertificateProperties:
 
         default_bits = user_config.get('bits')
         prompt_type = user_config.get('prompt')
+        print(prompt_type)
         default_md = user_config.get('message digest')
         req_extensions = 'req_ext'
         distinguished_name = 'dn'

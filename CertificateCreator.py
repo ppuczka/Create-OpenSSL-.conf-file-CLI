@@ -21,10 +21,13 @@ def user_input_parser():
             'type': 'list',
             'name': 'user_choice',
             'message': 'What do You want to create',
-            'choices': ['Create private and public key pair', 'Create private key and CSR']
-        }
+            'choices': ['Create private and public key pair', 'Create private key and CSR'],
+        },
+
     ]
-    return prompt(questions, style=custom_style_2).get('user_choice')
+    answers = prompt(questions, style=custom_style_2)
+    user_choice = answers.get('user_choice')
+    return user_choice
 
 
 def main():

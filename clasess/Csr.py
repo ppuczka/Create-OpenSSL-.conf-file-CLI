@@ -65,7 +65,7 @@ class Csr(Certificate, CertificateProperties):
 
         subject = x509.Name(
             [x509.NameAttribute(NameOID.COUNTRY_NAME, self.country_name),
-             x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAMEA, self.state_or_province_name),
+             x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, self.state_or_province_name),
              x509.NameAttribute(NameOID.LOCALITY_NAME, self.locality_name),
              x509.NameAttribute(NameOID.ORGANIZATION_NAME, self.organization_name),
              x509.NameAttribute(NameOID.COMMON_NAME, self.common_name)]
@@ -84,7 +84,7 @@ class Csr(Certificate, CertificateProperties):
                 .not_valid_after(valid_until)
         )
 
-        public_key = builder.sign(private_key, hashes.SHA256, default_backend())
+        public_key = builder.sign(private_key, hashes.SHA256(), default_backend())
 
         with open(f"{path}/ca_pub_key.pem", "wb") as f:
             f.write(public_key.public_bytes(serialization.Encoding.PEM))
