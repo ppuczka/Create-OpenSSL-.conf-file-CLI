@@ -1,4 +1,3 @@
-import configparser
 from datetime import datetime, timedelta
 
 from cryptography.hazmat.backends import default_backend
@@ -11,6 +10,8 @@ from cryptography.hazmat.primitives import hashes
 
 from clasess.Certificate import Certificate
 from clasess.CertificateProperties import CertificateProperties
+
+import configparser
 
 
 class Csr(Certificate, CertificateProperties):
@@ -59,7 +60,7 @@ class Csr(Certificate, CertificateProperties):
         print(f'{f.name} file created successfully')
         return private_key
 
-    def create_public_key(self, path):
+    def create_key_pair(self, path):
         private_key = self.create_private_key(path)
 
         subject = x509.Name(

@@ -1,7 +1,9 @@
 import argparse
-import os
 import logging
+import os
 
+from PyInquirer import prompt
+from examples import custom_style_2
 from pyfiglet import Figlet
 
 from clasess.Certificate import Certificate
@@ -13,14 +15,29 @@ SOFTWARE_VERSION = '1.0.0'
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 
+def user_input_parser():
+    questions = [
+        {
+            'type': 'list',
+            'name': 'user_choice',
+            'message': 'What do You want to create',
+            'choices': ['Create private and public key pair', 'Create private key and CSR']
+        }
+    ]
+    return prompt(questions, style=custom_style_2).get('user_choice')
+
+
 def main():
     parser = argparse.ArgumentParser(description='Create openSSL config files, certificates and keys with one command')
 
     parser.add_argument('--create-config', '-c', dest='create_config_file', action='store_true',
                         help='creates openSSL config file at current folder')
 
-    parser.add_argument('--create-csr', '-s', dest='create_csr', action='store_true',
+    parser.add_argument('--create', '-s', dest='create', action='store_true',
                         help='creates private key and certificate signing request')
+
+    # parser.add_argument('--create-key-pair', dest='key_pair', action='store_true',
+    #                     help='creates public and private key')
 
     parser.add_argument('-p', '--path', default=current_path, required=False,
                         help='enter path to store file either current path will be used')
@@ -52,23 +69,26 @@ def main():
             print(openssl_config_file)
             user_input = input("Is this correct Y/N ? ")
 
-        openssl_config_file.create_config_file(destination_folder_path, certificate_properties, SOFTWARE_NAME, SOFTWARE_VERSION)
-    # TODO: file path configuration
-    if args.create_csr:
+        openssl_config_file.create_config_file(destination_folder_path, certificate_properties,
+                                               SOFTWARE_NAME, SOFTWARE_VERSION)
+    if args.create:
         figlet = Figlet(font='slant')
         print(figlet.renderText(SOFTWARE_NAME))
+        user_choice = user_input_parser()
+        if config_file_path is None:
+            config_file_path = input('Warning file path to config file not present.\nEnter config file path: ')
+        config_file_dir = os.path.dirname(config_file_path)
+        creator = Csr.from_config_file(config_file_path)
+        print(f"Config file loaded successfully")
         try:
-            if config_file_path is None:
-                config_file_path = input('Warning file path to config file not present.\nEnter config file path: ')
-
-            config_file_dir = os.path.dirname(config_file_path)
-            csr_creator = Csr.from_config_file(config_file_path)
-            print(f"Config file loaded successfully")
-            csr_creator.create_csr(config_file_dir)
-
+            if user_choice == 'Create private and public key pair':
+                creator.create_key_pair(config_file_dir)
+            else:
+                creator.create_csr(config_file_dir)
         except KeyError:
             logging.error("Error while loading file please verify path and file name ")
 
 
 if __name__ == "__main__":
     main()
+
